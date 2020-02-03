@@ -10,6 +10,10 @@
     </delete>
 
     <select id="queryRolePermissionIdsByRid" resultType="java.lang.Integer">
-        select pid from sys_role_permission where rid=#{value}
+        select pid from sys_role_permission where rid=#{value};
     </select>
+
+    <insert id="saveRolePermission">
+        insert into sys_role_permission(rid,pid) values(#{rid},#{pid});
+    </insert>
 </mapper>
