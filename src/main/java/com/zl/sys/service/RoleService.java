@@ -1,9 +1,13 @@
 package com.zl.sys.service;
 
+import com.zl.sys.common.DataGridView;
 import com.zl.sys.domain.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zl.sys.vo.RoleVo;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public interface RoleService extends IService<Role> {
@@ -16,4 +20,13 @@ public interface RoleService extends IService<Role> {
 
     //根据用户id查询用户的角色权限
     List<Integer> queryUserRoleIdsByUid(Integer id);
+
+    //根据用户ID查询角色并选中已拥有的角色
+    List<Map<String, Object>> initRoleByUserId(Integer id);
+
+    //获取所有角色
+    DataGridView loadAllRole(RoleVo roleVo);
+
+    //通过用户id设置左边菜单栏
+    Set<Integer> queryMenuPermissionByUid(Integer id);
 }

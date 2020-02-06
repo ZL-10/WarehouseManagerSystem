@@ -2,18 +2,12 @@ package com.zl.sys.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zl.sys.common.Constant;
 import com.zl.sys.common.DataGridView;
 import com.zl.sys.common.ResultObj;
 import com.zl.sys.common.TreeNode;
 import com.zl.sys.domain.Dept;
-import com.zl.sys.domain.Notice;
 import com.zl.sys.service.DeptService;
 import com.zl.sys.vo.DeptVo;
-import com.zl.sys.vo.NoticeVo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -53,15 +47,13 @@ public class DeptController {
      **/
     @RequestMapping(value = "/loadAllDept")
     public DataGridView loadAllDept(DeptVo deptVo) {
-        IPage<Dept> page = new Page<>(deptVo.getPage(), deptVo.getLimit());
-        QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(deptVo.getTitle()), "title", deptVo.getTitle());
-        queryWrapper.like(StringUtils.isNotBlank(deptVo.getAddress()), "address", deptVo.getAddress());
-        queryWrapper.like(StringUtils.isNotBlank(deptVo.getRemark()), "remark", deptVo.getRemark());
-        queryWrapper.eq(deptVo.getId() != null, "id", deptVo.getId()).or().eq(deptVo.getId() != null, "pid", deptVo.getId());
-        queryWrapper.orderByAsc("ordernum");
-        this.deptService.page(page, queryWrapper);
-        return new DataGridView(page.getTotal(), page.getRecords());
+        try{
+            return this.deptService.loadAllDept(deptVo);
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
 

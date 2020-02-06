@@ -1,31 +1,20 @@
 package com.zl.sys.controller;
 
-import cn.hutool.core.util.IdUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.Query;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zl.sys.common.Constant;
 import com.zl.sys.common.DataGridView;
 import com.zl.sys.common.PinyinUtils;
 import com.zl.sys.common.ResultObj;
-import com.zl.sys.domain.Dept;
-import com.zl.sys.domain.Role;
 import com.zl.sys.domain.User;
 import com.zl.sys.service.DeptService;
 import com.zl.sys.service.RoleService;
 import com.zl.sys.service.UserService;
 import com.zl.sys.vo.UserVo;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.transform.Result;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,30 +43,28 @@ public class UserController {
      */
     @RequestMapping(value = "/loadAllUser")
     public DataGridView loadAllUser(UserVo userVo) {
-        IPage<User> page = new Page<>(userVo.getPage(), userVo.getLimit());
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(StringUtils.isNotBlank(userVo.getName()), "loginname", userVo.getName()).or().eq(StringUtils.isNotBlank(userVo.getName()), "name", userVo.getName());
-        queryWrapper.eq(StringUtils.isNotBlank(userVo.getAddress()), "address", userVo.getAddress());
-        queryWrapper.eq("type", Constant.USER_TYPE_NORMAL);//查询系统用户
-        queryWrapper.eq(userVo.getDeptid() != null, "deptid", userVo.getDeptid());
-        this.userService.page(page, queryWrapper);
+        try {
+            IPage<User> page = userService.loadAllUserByPage(userVo);
+            List<User> users = page.getRecords();
+            for (User user : users) {
+                Integer deptId = user.getDeptid();
+                if (null != deptId) {
+                    this.deptService.setUserDeptName(user,deptId);
+                }
 
-        List<User> users = page.getRecords();
-        for (User user : users) {
-            Integer deptId = user.getDeptid();
-            if (null != deptId) {
-                Dept dept = deptService.getById(deptId);
-                user.setDeptName(dept.getTitle());
+                Integer mgrId = user.getMgr();
+                if (null != mgrId) {
+                    this.userService.setUserLeaderName(user, mgrId);
+                }
+
             }
-
-            Integer mgrId = user.getMgr();
-            if (null != mgrId) {
-                User leader = this.userService.getById(mgrId);
-                user.setLeaderName(leader.getName());
-            }
-
+            return new DataGridView(page.getTotal(), users);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
-        return new DataGridView(page.getTotal(), users);
+
+
     }
 
     /**
@@ -88,7 +75,13 @@ public class UserController {
      */
     @RequestMapping(value = "/loadUserById")
     public DataGridView loadUserById(Integer id) {
-        return new DataGridView(this.userService.getById(id));
+        try{
+            return new DataGridView(this.userService.getById(id));
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     /**
@@ -98,18 +91,13 @@ public class UserController {
      */
     @RequestMapping("loadUserMaxOrderNum")
     public Map<String, Object> loadUserMaxOrderNum() {
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderByDesc("ordernum");
-        IPage<User> page = new Page<>(1, 1);
-        List<User> list = this.userService.page(page, queryWrapper).getRecords();
-        if (list.size() > 0) {
-            map.put("value", list.get(0).getOrdernum() + 1);
-        } else {
-            map.put("value", 1);
+        try{
+            return userService.loadUserMaxOrderNum();
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
-        return map;
+
     }
 
     /**
@@ -119,12 +107,13 @@ public class UserController {
      **/
     @RequestMapping("loadUsersByDeptId")
     public DataGridView loadUsersByDeptId(Integer deptId) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(deptId != null, "deptid", deptId);
-        queryWrapper.eq("available", Constant.AVAILABLE_TRUE);
-        queryWrapper.eq("type", Constant.USER_TYPE_NORMAL);
-        List<User> list = this.userService.list(queryWrapper);
-        return new DataGridView(list);
+        try {
+            return this.userService.loadUsersByDeptId(deptId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     /**
@@ -152,12 +141,7 @@ public class UserController {
     @RequestMapping(value = "/addUser")
     public ResultObj addUser(UserVo userVo) {
         try {
-            userVo.setType(Constant.USER_TYPE_NORMAL);//设置类型
-            userVo.setHiredate(new Date());
-            String salt = IdUtil.simpleUUID().toUpperCase();
-            userVo.setSalt(salt);//设置盐
-            userVo.setPwd(new Md5Hash(Constant.USER_DEFAULT_PWD, salt, 2).toString());//设置密码
-            this.userService.save(userVo);
+            this.userService.addUser(userVo);
             return ResultObj.ADD_SUCCESS;
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,12 +193,7 @@ public class UserController {
     @RequestMapping(value = "/resetPwd")
     public ResultObj resetPwd(Integer id) {
         try {
-            User user = new User();
-            user.setId(id);
-            String salt = IdUtil.simpleUUID().toUpperCase();
-            user.setSalt(salt);//设置盐
-            user.setPwd(new Md5Hash(Constant.USER_DEFAULT_PWD, salt, 2).toString());//设置密码
-            this.userService.updateById(user);
+            this.userService.resetPwd(id);
             return ResultObj.RESET_SUCCESS;
         } catch (Exception e) {
             e.printStackTrace();
@@ -230,24 +209,7 @@ public class UserController {
     @RequestMapping(value = "/initRoleByUserId")
     public DataGridView initRoleByUserId(Integer id){
         try{
-            QueryWrapper<Role> queryWrapper=new QueryWrapper<>();
-            queryWrapper.eq("available",Constant.AVAILABLE_TRUE);
-            List<Map<String,Object>> listMaps=this.roleService.listMaps();
-            System.out.println(listMaps.size());
-
-
-            List<Integer> currentUserRoleIds=this.roleService.queryUserRoleIdsByUid(id);
-            for (Map<String, Object> map : listMaps) {
-                Boolean LAY_CHECKED=false;
-                Integer roleId=(Integer) map.get("id");
-                for (Integer rid : currentUserRoleIds) {
-                    if(rid==roleId) {
-                        LAY_CHECKED=true;
-                        break;
-                    }
-                }
-                map.put("LAY_CHECKED", LAY_CHECKED);
-            }
+            List<Map<String,Object>> listMaps=this.roleService.initRoleByUserId(id);
             return new DataGridView(Long.valueOf(listMaps.size()), listMaps);
         }catch (Exception e){
             e.printStackTrace();
