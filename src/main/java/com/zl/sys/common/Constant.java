@@ -1,6 +1,8 @@
 package com.zl.sys.common;
 
 public interface Constant {
+
+    public static final String USER_DEFAULT_PWD="123456";
     /**
      * 状态码
      */

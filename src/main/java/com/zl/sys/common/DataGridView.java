@@ -21,4 +21,8 @@ public class DataGridView {
         super();
         this.data = data;
     }
+
+    public DataGridView(String msg) {
+        this.msg = msg;
+    }
 }

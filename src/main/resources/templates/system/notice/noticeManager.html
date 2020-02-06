@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta charset="UTF-8">
     <title>公告管理</title>
@@ -68,7 +69,7 @@
 <div>
     <table class="layui-hide" id="noticeTable" lay-filter="noticeTable"></table>
     <div id="noticeToolBar" style="display: none;">
-        <button type="button" lay-event="addNotice" class="layui-btn layui-btn-sm layui-btn-danger"><span
+        <button type="button" lay-event="addNotice"  class="layui-btn layui-btn-sm layui-btn-danger"><span
                 class="layui-icon layui-icon-addition"></span>添加
         </button>
         <button type="button" lay-event="batchDelete" class="layui-btn layui-btn-sm layui-btn-danger"><span

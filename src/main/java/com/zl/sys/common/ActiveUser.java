@@ -13,7 +13,7 @@ import java.util.List;
 public class ActiveUser {
     private User user;
     private List<String> roles;
-    private List<String> permission;
+    private List<String> permissions;
 
 
 
