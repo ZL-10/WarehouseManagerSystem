@@ -1,0 +1,26 @@
+package com.zl.sys.vo;
+
+import com.zl.sys.domain.Notice;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
+
+@Data
+@EqualsAndHashCode(callSuper=false)
+public class NoticeVo extends Notice {
+
+    private static final long serialVersionUID = -1602190476367707156L;
+    private Integer page=1;
+    private Integer limit=10;
+
+    private Integer[] ids;//接收多个ID
+
+
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date startTime;
+
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
+}
