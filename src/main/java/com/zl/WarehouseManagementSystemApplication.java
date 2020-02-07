@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan(basePackages= {"com.zl.sys.mapper"})
+@MapperScan(basePackages= {"com.zl.sys.mapper","com.zl.business.mapper"})
 public class WarehouseManagementSystemApplication {
 
     public static void main(String[] args) {
