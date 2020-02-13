@@ -25,5 +25,7 @@ public interface Constant {
     public static final Integer OPEN_TRUE = 1;
     public static final Integer OPEN_FALSE = 0;
 
+    public static final String IMAGES_DEFAULTGOODSIMG_PNG = "images/defaultgoodsimg.png";
+
 
 }
