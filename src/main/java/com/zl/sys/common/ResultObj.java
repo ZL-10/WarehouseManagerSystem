@@ -28,6 +28,9 @@ public class ResultObj {
     public static final ResultObj DISPATCH_SUCCESS=new ResultObj(Constant.OK,"分配成功");
     public static final ResultObj DISPATCH_ERROR=new ResultObj(Constant.ERROR,"分配失败");
 
+    public static final ResultObj  OPERATE_SUCCESS=new ResultObj(Constant.OK, "操作成功");
+    public static final ResultObj  OPERATE_ERROR=new ResultObj(Constant.ERROR, "操作失败");
+
     private Integer code;
     private String message;
 }
