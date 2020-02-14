@@ -63,5 +63,4 @@ shiro:
   log-out-url: /login/logout*
   authc-ulrs:
     - /**
-server:
-  port: 8081
+

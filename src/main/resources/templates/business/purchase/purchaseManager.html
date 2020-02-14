@@ -79,12 +79,12 @@
 
 <!-- 数据表格开始 -->
 <div>
-	<table class="layui-hide" id="inportTable" lay-filter="inportTable"></table>
-	<div id="inportToolBar" style="display: none;">
+	<table class="layui-hide" id="purchaseTable" lay-filter="purchaseTable"></table>
+	<div id="purchaseToolBar" style="display: none;">
 		<button type="button" lay-event="add" class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-add-1"></span>添加商品进货</button>
 	</div>
 	
-	<div id="inportRowBar" style="display: none;">
+	<div id="purchaseRowBar" style="display: none;">
 		<button type="button" lay-event="update" class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-edit"></span>更新</button>
 		<button type="button" lay-event="delete" class="layui-btn layui-btn-sm layui-btn-danger"><span class="layui-icon layui-icon-delete"></span>删除</button>
 		<button type="button" lay-event="back" class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-edit"></span>退货</button>
@@ -126,7 +126,7 @@
 					<div class="layui-inline">
 					    <label class="layui-form-label">进货价格</label>
 						<div class="layui-input-inline">
-							<input type="text" class="layui-input" name="inportprice" lay-verify="number" placeholder="请输入商品进货规格">
+							<input type="text" class="layui-input" name="purchaseprice" lay-verify="number" placeholder="请输入商品进货规格">
 					   </div>
 					</div>
 				</div>
@@ -205,9 +205,9 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 		
 		//加载 数据
 		 tableIns=table.render({
-			 elem: '#inportTable'
-		    ,url:'/inport/loadAllInport'
-		    ,toolbar: '#inportToolBar' //开启头部工具栏，并为其绑定左侧模板
+			 elem: '#purchaseTable'
+		    ,url:'/purchase/loadAllPurchase'
+		    ,toolbar: '#purchaseToolBar' //开启头部工具栏，并为其绑定左侧模板
 		    ,title: '商品进货数据表'
 		    ,height:'full-280'
 		    ,page: true
@@ -221,7 +221,7 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 		      ,{field:'inportprice', title:'进货价格',align:'center',width:'100'}
 		      ,{field:'remark', title:'备注',align:'center',width:'120'}
 		      ,{field:'operateperson', title:'操作员',align:'center',width:'100'}
-		      ,{fixed: 'right', title:'操作', toolbar: '#inportRowBar',align:'center',width:'250'}
+		      ,{fixed: 'right', title:'操作', toolbar: '#purchaseRowBar',align:'center',width:'250'}
 		    ] ]
 		      ,done: function(res, curr, count){ //处理删除某一页最后一条数据的BUG
 			        if(res.data.length==0&&curr!=1){
@@ -268,7 +268,7 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 		});
 		
 		//监听工具条的事件
-		table.on("toolbar(inportTable)",function(obj){
+		table.on("toolbar(purchaseTable)",function(obj){
 			 switch(obj.event){
 			    case 'add':
 			     openAddLayer();
@@ -280,14 +280,14 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 		});
 		
 		//监听行工具条的事件
-		table.on("tool(inportTable)",function(obj){
+		table.on("tool(purchaseTable)",function(obj){
 			  var data = obj.data; //获得当前行数据
 			 switch(obj.event){
 			    case 'update':
-			   		openUpdateInportLayer(data);
+			   		openUpdatePurchaseLayer(data);
 			    break;
 			    case 'delete':
-			   		deleteInport(data);
+			   		deletePurchase(data);
 			    break;
 			    case 'back':
 			   		back(data);
@@ -306,7 +306,7 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 				title:'添加商品进货',
 				success:function(){
 					$("#dataFrm")[0].reset();
-					url="/inport/addInport";
+					url="/purchase/addPurchase";
 					initProviderSelect();
 					$(".mydiv").hide();
 				}
@@ -359,7 +359,7 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 		
 		
 		//打开修改的弹出层
-		function openUpdateInportLayer(data){
+		function openUpdatePurchaseLayer(data){
 			mainIndex=layer.open({
 				type:1,
 				content:$("#addOrUpdateDiv"),
@@ -371,7 +371,7 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 					form.val("dataFrm",data);
 					initProviderSelect(data.providerid);
 					initGoodsSelect(data.providerid,data.goodsid);
-					url="/inport/updateInport";
+					url="/purchase/updatePurchase";
 					//禁用供应商和商品的下拉框
 					$(".mydiv").show();
 					
@@ -390,9 +390,9 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 			return false;
 		});
 		//删除
-		function deleteInport(data){
+		function deletePurchase(data){
 			layer.confirm('你确定要删除这个商品进货吗?', {icon: 3, title:'提示'}, function(index){
-				$.post("/inport/deleteInport",{id:data.id},function(res){
+				$.post("/purchase/deletePurchase",{id:data.id},function(res){
 					if(res.code==200){
 						tableIns.reload();
 					}

@@ -79,7 +79,7 @@
 
 <!-- 数据表格开始 -->
 <div>
-	<table class="layui-hide" id="outportTable" lay-filter="outportTable"></table>
+	<table class="layui-hide" id="refundTable" lay-filter="refundTable"></table>
 </div>
 
 <!-- 数据表格结束 -->
@@ -105,8 +105,8 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 		
 		//加载 数据
 		 tableIns=table.render({
-			 elem: '#outportTable'
-		    ,url:'/outport/loadAllOutport'
+			 elem: '#refundTable'
+		    ,url:'/refund/loadAllRefund'
 		    ,toolbar: true //开启头部工具栏，并为其绑定左侧模板
 		    ,title: '商品退货数据表'
 		    ,height:'full-280'
@@ -118,7 +118,7 @@ layui.use(['jquery','form','table','layer','laydate'],function(){
 		      ,{field:'size', title:'商品规格',align:'center'}
 		      ,{field:'outputtime', title:'退货时间',align:'center'}
 		      ,{field:'number', title:'退货数量',align:'center'}
-		      ,{field:'outportprice', title:'退货价格',align:'center'}
+		      ,{field:'refundprice', title:'退货价格',align:'center'}
 		      ,{field:'remark', title:'备注',align:'center'}
 		      ,{field:'operateperson', title:'操作员',align:'center'}
 		    ] ]
